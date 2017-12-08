@@ -5,15 +5,12 @@ done for the CS Design of Information Capstone.
 Created by Anthony Napoleon
  */
 
-
 var requests = [];
+// Where we will be dynamically generating the requests list.
 var canvas;
 var row = [];
 
 function init(){
-
-    // Retrieve the requests here from the server
-    // requests =
 
     requests = [["Request 1", "Anthony", "I hurt my ankle while I was vacuuming.", "4"],
         ["Request 2", "Jesus", "I got a paper cut. The pain is not too bad but I dont want it to get infected.", "2"],
@@ -30,55 +27,75 @@ function init(){
         .html("Hello")
         .style("fill", "black");
 
+    // The initial call to retrieve requests from the server.
+    httpGetAsync("http://52.91.203.75/api/v0/requests/", displayRequests)
+}
 
-    // START LOOP
+/**
+ * Called when the Ambulance button is clicked.
+ */
+function ambulanceClicked(index){
+    console.log("AmbulanceClicked method.")
+    console.log(requests);
+    console.log("The row number is " + index);
+    //alert("Request: " + requests[index] + " was clicked \n" +
+    //"Ambulance will be sent for " + requests[index][1]);
 
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("PATCH", "http://52.91.203.75/api/v0/requests/" + requests[index].id + "/");
+    xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+    xmlHttp.send(JSON.stringify({status : "DENY"}));
+}
 
-    // this is working but not eh click events
-    /*for (x = 0; x < requests.length; x++)
-    {
-        // first create the row div "container)
-        row[x] = canvas.append("div")
-        //.html("this is a row div")
-            .attr("class", "container")
-            .attr("value", x);
-        // append first column in the row (Request info)
-        row[x].append("div")
-            .attr("class", "flex-item")
-            .html("Details");
-        var fixed = row[x].append("div")
-            .attr("class", ".fixed")
-        //.classed("fixed", true)
-        //.html("fixed");
-        fixed.append("input")
-            .attr("type", "button")
-            .attr("value", "ambulance")
-            .on("click", function(){
-                ambulanceClicked(row[x].value);
-            });
-        console.log("Request " + x + " has a value of " + requests[x]);
+/**
+ * Called when the DocDocGo button is clicked for a request.
+ */
+function docClicked(index){
+    console.log("DocClicked method.")
+    //alert("DocDocGo Button was clicked.");
 
-        fixed.append("input")
-            .attr("type", "button")
-            .attr("value", "DocDocGo")
-            .on("click", function(){
-                docClicked();
-            });
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("PATCH", "http://52.91.203.75/api/v0/requests/" + requests[index].id + "/");
+    xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+    xmlHttp.send(JSON.stringify({status : "ACPT"}));
+}
 
-        //.append("div")
-        //.attr("class", "label")
-        //.html("This is label two.");
-    }*/
+/**
+ * This function is used to make an http request to the server.
+ *
+ * @param theUrl
+ * @param callback
+ */
+function httpGetAsync(theUrl, callback)
+{
+    console.log("Inside httpGetAsync");
+    var xmlHttp = new XMLHttpRequest();
 
-    /*d3.select(this)
-        .data(requests).enter()
-        .append("div").text(function(d){
-            return d;
-        });*/
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous
+    xmlHttp.setRequestHeader('X-CSRFToken', document.cookie.match(/csrftoken=(.*)/));
+    xmlHttp.send(null);
+}
 
+function displayRequests(response){
+    //alert("Request List was updated.");
+    console.log("The displayRequests function was called.");
+    console.log(response);
+
+    // Parse the JSON response into an array.
+    var parsedResponse = JSON.parse(response);
+    var array = [];
+    for (var x in parsedResponse){
+        array.push(parsedResponse[x]);
+    }
+    requests = array;
+
+    // Clear the canvas item before displaying the list (prevent multiple lists)
+    d3.select("#canvas").html(null);
     requests.forEach(function(item, index){
-        /*canvas.append("div")
-            .html("Index " + index + " item: " + item);*/
 
         // first create the row div "container)
         row[index] = canvas.append("div")
@@ -89,19 +106,18 @@ function init(){
         var details = row[index].append("div")
             .attr("class", "flex-item")
             .html("Details");
-        /*.append("div")
-        .attr("class", "label")
-        .html("This is label one.");*/
+
 
         details.append("div")
-            .html( requests[index][0]);
+            .html("Request ID: " + requests[index].id);
         details.append("div")
-            .html("Name: " + requests[index][1]);
+            .html("Description: " + requests[index].description);
         details.append("div")
-            .html("Description: " + requests[index][2]);
+            .html("Status: " + requests[index].status);
         details.append("div")
-            .html("Pain Scale: " + requests[index][3]);
-
+            .html("Latitude: " + requests[index].latitude);
+        details.append("div")
+            .html("Longitude: " + requests[index].longitude);
 
         // Buttons section
 
@@ -121,24 +137,19 @@ function init(){
             .attr("type", "button")
             .attr("value", "DocDocGo")
             .on("click", function(){
-                docClicked();
+                docClicked(index);
             });
+
+        // end buttons section
+
     })
-}
 
-/**
- * Called when the Ambulance button is clicked.
- */
-    console.log("AmbulanceClicked method.")
-    console.log(requests);
-}
+    console.log("Looking at the first entry of requests now.");
+    console.log("ID is: " + requests[0].id);
+    console.log("Description is: " + requests[0].description);
 
-/**
- * Called when the DocDocGo button is clicked for a request.
- */
-function docClicked(){
-    console.log("DocClicked method.")
-    alert("DocDocGo Button was clicked.");
+    // Call the httpGetAsync method after 15 seconds (15000 milliseconds).
+    setTimeout(function(){httpGetAsync("http://52.91.203.75/api/v0/requests/", displayRequests);}, 15000)
 }
 
 // Call the init function
