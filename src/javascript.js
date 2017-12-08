@@ -5,6 +5,8 @@ done for the CS Design of Information Capstone.
 Created by Anthony Napoleon
  */
 
+var DDG_API_ADDRESS = "34.199.76.53";
+
 var requests = [];
 // Where we will be dynamically generating the requests list.
 var canvas;
@@ -28,7 +30,7 @@ function init(){
         .style("fill", "black");
 
     // The initial call to retrieve requests from the server.
-    httpGetAsync("http://52.91.203.75/api/v0/requests/", displayRequests)
+    httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/", displayRequests)
 }
 
 /**
@@ -42,7 +44,7 @@ function ambulanceClicked(index){
     //"Ambulance will be sent for " + requests[index][1]);
 
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("PATCH", "http://52.91.203.75/api/v0/requests/" + requests[index].id + "/");
+    xmlHttp.open("PATCH", "http://" + DDG_API_ADDRESS + "/api/v0/requests/" + requests[index].id + "/");
     xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xmlHttp.send(JSON.stringify({status : "DENY"}));
 }
@@ -55,7 +57,7 @@ function docClicked(index){
     //alert("DocDocGo Button was clicked.");
 
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("PATCH", "http://52.91.203.75/api/v0/requests/" + requests[index].id + "/");
+    xmlHttp.open("PATCH", "http://" + DDG_API_ADDRESS + "/api/v0/requests/" + requests[index].id + "/");
     xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xmlHttp.send(JSON.stringify({status : "ACPT"}));
 }
@@ -149,7 +151,7 @@ function displayRequests(response){
     console.log("Description is: " + requests[0].description);
 
     // Call the httpGetAsync method after 15 seconds (15000 milliseconds).
-    setTimeout(function(){httpGetAsync("http://52.91.203.75/api/v0/requests/", displayRequests);}, 15000)
+    setTimeout(function(){httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/", displayRequests);}, 15000)
 }
 
 // Call the init function
