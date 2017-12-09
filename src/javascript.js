@@ -30,7 +30,7 @@ function init(){
         .style("fill", "black");
 
     // The initial call to retrieve requests from the server.
-    httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/", displayRequests)
+    httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/?status=WAIT", displayRequests)
 }
 
 /**
@@ -151,7 +151,7 @@ function displayRequests(response){
     // console.log("Description is: " + requests[0].description);
 
     // Call the httpGetAsync method after 15 seconds (15000 milliseconds).
-    setTimeout(function(){httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/", displayRequests);}, 15000)
+    setTimeout(function(){httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/?status=WAIT", displayRequests);}, 15000)
 }
 
 // Call the init function
