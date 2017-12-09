@@ -146,9 +146,9 @@ function displayRequests(response){
 
     })
 
-    console.log("Looking at the first entry of requests now.");
-    console.log("ID is: " + requests[0].id);
-    console.log("Description is: " + requests[0].description);
+    // console.log("Looking at the first entry of requests now.");
+    // console.log("ID is: " + requests[0].id);
+    // console.log("Description is: " + requests[0].description);
 
     // Call the httpGetAsync method after 15 seconds (15000 milliseconds).
     setTimeout(function(){httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/", displayRequests);}, 15000)
