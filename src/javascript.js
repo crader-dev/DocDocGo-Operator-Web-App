@@ -74,8 +74,9 @@ function httpGetAsync(theUrl, callback)
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
             callback(xmlHttp.responseText);
+        }
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous
     xmlHttp.setRequestHeader('X-CSRFToken', document.cookie.match(/csrftoken=(.*)/));
@@ -96,8 +97,20 @@ function displayRequests(response){
     requests = array;
 
     // Clear the canvas item before displaying the list (prevent multiple lists)
-    d3.select("#canvas").html(null);
+    clearCanvas();
+    d3.select("body").selectAll("h1").remove();
+
+    // Create the h1 element and append to the body.
+    var x = document.createElement("h1");
+    var t = document.createTextNode("No requests to display.");
+    x.appendChild(t);
+    document.body.appendChild(x);
+
     requests.forEach(function(item, index){
+        console.log("Inside requests foreach");
+
+        clearCanvas();
+        d3.select("body").selectAll("h1").remove();
 
         // first create the row div "container)
         row[index] = canvas.append("div")
@@ -108,7 +121,6 @@ function displayRequests(response){
         var details = row[index].append("div")
             .attr("class", "flex-item")
             .html("Details");
-
 
         details.append("div")
             .html("Request ID: " + requests[index].id);
@@ -125,20 +137,19 @@ function displayRequests(response){
 
         var fixed = row[index].append("div")
             .attr("class", ".fixed")
-        //.classed("fixed", true)
-        //.html("fixed");
-        fixed.append("input")
-            .attr("type", "button")
-            .attr("value", "ambulance")
+
+        fixed.append("img")
+            .attr("src", "ambulance.png")
             .on("click", function(){
+                //alert("clicked");
                 ambulanceClicked(index);
             });
         console.log("Request " + index + " has a value of " + requests[index]);
 
-        fixed.append("input")
-            .attr("type", "button")
-            .attr("value", "DocDocGo")
+        fixed.append("img")
+            .attr("src", "doctor.png")
             .on("click", function(){
+                //alert("clicked");
                 docClicked(index);
             });
 
@@ -152,6 +163,13 @@ function displayRequests(response){
 
     // Call the httpGetAsync method after 15 seconds (15000 milliseconds).
     setTimeout(function(){httpGetAsync("http://" + DDG_API_ADDRESS + "/api/v0/requests/?status=WAIT", displayRequests);}, 15000)
+}
+
+/**
+ * Helper function to clear the canvas div.
+ */
+function clearCanvas(){
+    d3.select("#canvas").html(null);
 }
 
 // Call the init function
