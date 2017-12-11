@@ -109,7 +109,6 @@ function displayRequests(response){
     requests.forEach(function(item, index){
         console.log("Inside requests foreach");
 
-        clearCanvas();
         d3.select("body").selectAll("h1").remove();
 
         // first create the row div "container)
