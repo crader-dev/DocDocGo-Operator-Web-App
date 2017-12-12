@@ -115,6 +115,7 @@ function displayRequests(response){
         row[index] = canvas.append("div")
         //.html("this is a row div")
             .attr("class", "container")
+            .attr("margin-bottom", "25px")
             .attr("value", index);
         // append first column in the row (Request info)
         var details = row[index].append("div")
@@ -127,30 +128,55 @@ function displayRequests(response){
             .html("Description: " + requests[index].description);
         details.append("div")
             .html("Status: " + requests[index].status);
-        details.append("div")
+        /*details.append("div")
             .html("Latitude: " + requests[index].latitude);
         details.append("div")
-            .html("Longitude: " + requests[index].longitude);
+            .html("Longitude: " + requests[index].longitude);*/
+        details.append("div")
+            .html("Pain Severity: " + requests[index].pain_severity + " of 10");
 
         // Buttons section
 
         var fixed = row[index].append("div")
             .attr("class", ".fixed")
 
-        fixed.append("img")
-            .attr("src", "ambulance.png")
+        // hvrbox first which contains img
+        var hvrBox1 = fixed.append("div")
+            .attr("class", "hvrbox");
+
+        var ambulance = hvrBox1.append("img")
+            .attr("src", "ambulance2.png")
+            .attr("class", "ImageBorder hvrbox-layer_bottom")
+            .attr("id", "ambulanceButton")
             .on("click", function(){
                 //alert("clicked");
                 ambulanceClicked(index);
             });
-        console.log("Request " + index + " has a value of " + requests[index]);
+        var topLayer1 = hvrBox1.append("div")
+            .attr("class", "hvrbox-layer_top");
+        topLayer1.append("div")
+                .attr("class", "hvrbox-text")
+                .html("Send an Ambulance.");
 
-        fixed.append("img")
+        console.log("Request " + index + " has a value of " + requests[index]);
+        
+        var hvrBox2 = fixed.append("div")
+            .attr("class", "hvrbox");
+
+        var doctor = hvrBox2.append("img")
             .attr("src", "doctor.png")
+            .attr("class", "ImageBorder hvrbox-layer_bottom")
             .on("click", function(){
                 //alert("clicked");
                 docClicked(index);
             });
+
+        var topLayer2 = hvrBox2.append("div")
+            .attr("class", "hvrbox-layer_top");
+
+        topLayer2.append("div")
+            .attr("class", "hvrbox-text")
+            .html("Send a Doctor.");
 
         // end buttons section
 
