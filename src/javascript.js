@@ -47,6 +47,13 @@ function ambulanceClicked(index){
     xmlHttp.open("PATCH", "http://" + DDG_API_ADDRESS + "/api/v0/requests/" + requests[index].id + "/");
     xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xmlHttp.send(JSON.stringify({status : "DENY"}));
+
+
+    // Remove the row after the click.
+    console.log("row" + index);
+    var element = document.getElementById("row" + index);
+    console.log(element);
+    element.remove();
 }
 
 /**
@@ -60,6 +67,11 @@ function docClicked(index){
     xmlHttp.open("PATCH", "http://" + DDG_API_ADDRESS + "/api/v0/requests/" + requests[index].id + "/");
     xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xmlHttp.send(JSON.stringify({status : "ACPT"}));
+
+    // Remove the row after the click
+    var element = document.getElementById("row" + index);
+    console.log(element);
+    element.remove();
 }
 
 /**
@@ -116,6 +128,7 @@ function displayRequests(response){
         //.html("this is a row div")
             .attr("class", "container")
             .attr("margin-bottom", "25px")
+            .attr("id", "row" + index)
             .attr("value", index);
         // append first column in the row (Request info)
         var details = row[index].append("div")
@@ -150,34 +163,46 @@ function displayRequests(response){
             .attr("id", "ambulanceButton")
             .on("click", function(){
                 //alert("clicked");
-                ambulanceClicked(index);
+                //ambulanceClicked(index);
             });
         var topLayer1 = hvrBox1.append("div")
-            .attr("class", "hvrbox-layer_top");
+            .attr("class", "hvrbox-layer_top")
+            .on("click", function(){
+                //alert("ambulance clicked");
+                ambulanceClicked(index);
+            });
+
         topLayer1.append("div")
                 .attr("class", "hvrbox-text")
                 .html("Send an Ambulance.");
 
+
         console.log("Request " + index + " has a value of " + requests[index]);
-        
+
         var hvrBox2 = fixed.append("div")
             .attr("class", "hvrbox");
 
         var doctor = hvrBox2.append("img")
             .attr("src", "doctor.png")
-            .attr("class", "ImageBorder hvrbox-layer_bottom")
+            .attr("class", "ImageBorder hvrbox-layer_bottom");
+
+
+        var topLayer2 = hvrBox2.append("div")
+            .attr("class", "hvrbox-layer_top")
             .on("click", function(){
                 //alert("clicked");
                 docClicked(index);
             });
 
-        var topLayer2 = hvrBox2.append("div")
-            .attr("class", "hvrbox-layer_top");
-
         topLayer2.append("div")
             .attr("class", "hvrbox-text")
-            .html("Send a Doctor.");
+            .html("Send a Doctor.")
+            .attr("id", "hvr2Text");
 
+/*        document.getElementsByClassName('hvr2Text')[0]
+            .addEventListener('click', function (event) {
+                alert("clicked");
+            });*/
         // end buttons section
 
     })
